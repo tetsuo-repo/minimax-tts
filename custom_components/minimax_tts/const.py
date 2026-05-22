@@ -41,7 +41,7 @@ MODELS: Final = [
     "speech-02-hd",
     "speech-02-turbo",
 ]
-DEFAULT_MODEL: Final = "speech-2.6-turbo"
+DEFAULT_MODEL: Final = "speech-2.8-hd"
 
 # --- Audio settings --------------------------------------------------------
 AUDIO_FORMATS: Final = ["mp3", "wav", "flac", "pcm"]
