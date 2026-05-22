@@ -1,0 +1,56 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MiniMax-Zugangsdaten",
+        "description": "Gib dein persönliches MiniMax-Zugriffstoken ein. Erstelle eines unter https://platform.minimax.io (Account → API Keys). Token und Region müssen zusammenpassen.",
+        "data": {
+          "api_key": "Persönliches Zugriffstoken",
+          "host": "Region",
+          "group_id": "Group ID (optional)"
+        }
+      },
+      "voice": {
+        "title": "Standardstimme",
+        "description": "Wähle die Standardstimme und das Modell für die Sprachausgabe. Du kannst beides später in den Integrationsoptionen ändern.",
+        "data": {
+          "voice": "Stimme",
+          "model": "Modell"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Ungültiges Token oder das Token passt nicht zur gewählten Region.",
+      "cannot_connect": "MiniMax konnte nicht erreicht werden. Prüfe deine Internetverbindung und versuche es erneut."
+    },
+    "abort": {
+      "already_configured": "Dieser MiniMax-Account ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "MiniMax-TTS-Optionen",
+        "data": {
+          "voice": "Stimme",
+          "model": "Modell",
+          "speed": "Geschwindigkeit",
+          "format": "Audioformat",
+          "sample_rate": "Abtastrate (Hz)",
+          "language_boost": "Sprachverstärkung"
+        },
+        "data_description": {
+          "language_boost": "Belasse \"auto\", damit MiniMax die Sprache erkennt, oder gib einen Sprachnamen an, um die Aussprache zu beeinflussen."
+        }
+      }
+    }
+  },
+  "selector": {
+    "host": {
+      "options": {
+        "international": "International (api.minimax.io)",
+        "china": "China (api.minimaxi.com)"
+      }
+    }
+  }
+}
