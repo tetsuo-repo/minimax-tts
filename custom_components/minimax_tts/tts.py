@@ -53,8 +53,9 @@ async def async_setup_entry(
 class MiniMaxTTSEntity(TextToSpeechEntity):
     """A MiniMax cloud text-to-speech engine."""
 
-    _attr_has_entity_name = True
-    _attr_name = None
+    # The TTS component uses entity.name as the engine name (it must be a
+    # non-None string), so we set an explicit name rather than has_entity_name.
+    _attr_name = "MiniMax TTS"
     _attr_supported_languages = SUPPORTED_LANGUAGES
     _attr_default_language = DEFAULT_LANGUAGE
     _attr_supported_options = [CONF_VOICE, CONF_MODEL, CONF_SPEED]
