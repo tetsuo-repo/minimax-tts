@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
+import json
 import logging
 from typing import Any
 
@@ -82,8 +83,9 @@ class MiniMaxClient:
                 async with self._session.post(
                     self._url(path), headers=self._headers, json=payload
                 ) as resp:
+                    _LOGGER.debug("POST %s -> HTTP %s", path, resp.status)
                     resp.raise_for_status()
-                    data: dict[str, Any] = await resp.json(content_type=None)
+                    body = await resp.text()
         except TimeoutError as err:
             raise MiniMaxError("Timeout contacting MiniMax") from err
         except aiohttp.ClientResponseError as err:
@@ -92,6 +94,11 @@ class MiniMaxClient:
             raise MiniMaxError(f"HTTP {err.status}: {err.message}") from err
         except aiohttp.ClientError as err:
             raise MiniMaxError(f"Connection error: {err}") from err
+
+        try:
+            data: dict[str, Any] = json.loads(body)
+        except ValueError as err:
+            raise MiniMaxError(f"Invalid (non-JSON) response from MiniMax: {body[:200]}") from err
 
         self._check_base_resp(data)
         return data
@@ -159,12 +166,19 @@ class MiniMaxClient:
                 "channel": 1,
             },
         }
+        _LOGGER.debug(
+            "Synthesizing %d chars with voice=%s model=%s format=%s rate=%s",
+            len(text), voice_id, model, audio_format, sample_rate,
+        )
         data = await self._post(PATH_T2A, payload)
         audio_hex = (data.get("data") or {}).get("audio")
         if not audio_hex:
-            raise MiniMaxError("MiniMax returned no audio data")
+            raise MiniMaxError(
+                f"MiniMax returned no audio data (extra_info={data.get('extra_info')})"
+            )
         try:
             audio = bytes.fromhex(audio_hex)
         except ValueError as err:
             raise MiniMaxError("Failed to decode audio payload") from err
+        _LOGGER.debug("Received %d bytes of %s audio", len(audio), audio_format)
         return audio_format, audio

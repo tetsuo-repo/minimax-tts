@@ -42,8 +42,10 @@ async def async_setup_entry(
     client = entry.runtime_data
     try:
         voices = await client.get_voices()
-    except MiniMaxError as err:
-        _LOGGER.debug("Could not fetch MiniMax voices at setup: %s", err)
+    except Exception as err:  # noqa: BLE001 - entity must come up regardless
+        # The voice list only feeds the UI dropdown; synthesis uses the
+        # configured default voice, so create the entity even if this fails.
+        _LOGGER.warning("Could not fetch MiniMax voices at setup: %s", err)
         voices = []
     async_add_entities([MiniMaxTTSEntity(entry, voices)])
 
@@ -93,6 +95,9 @@ class MiniMaxTTSEntity(TextToSpeechEntity):
         if not voice:
             raise HomeAssistantError("No MiniMax voice configured")
 
+        _LOGGER.debug(
+            "TTS request: lang=%s voice=%s model=%s len=%d", language, voice, model, len(message)
+        )
         try:
             return await self._client.synthesize(
                 message,

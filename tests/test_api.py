@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any
 
 import pytest
@@ -28,8 +29,13 @@ class _FakeResp:
     async def __aexit__(self, *exc: object) -> bool:
         return False
 
+    status = 200
+
     def raise_for_status(self) -> None:
         return None
+
+    async def text(self) -> str:
+        return json.dumps(self._payload)
 
     async def json(self, content_type: Any = None) -> dict[str, Any]:
         return self._payload
